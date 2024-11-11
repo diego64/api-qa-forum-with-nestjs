@@ -11,7 +11,7 @@ import {
 } from '../use-cases/send-notification'
 import { InMemoryNotificationsRepository } from 'test/repositories/in-memory-notifications-repository'
 import { makeQuestion } from 'test/factories/make-question'
-import { SpyInstance } from 'vitest'
+import { vi } from 'vitest'
 import { waitFor } from 'test/utils/wait-for'
 
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
@@ -21,34 +21,26 @@ let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryNotificationsRepository: InMemoryNotificationsRepository
 let sendNotificationUseCase: SendNotificationUseCase
 
-let sendNotificationExecuteSpy: SpyInstance<
-  [SendNotificationUseCaseRequest],
-  Promise<SendNotificationUseCaseResponse>
+let sendNotificationExecuteSpy: vi.SpyInstance<
+  Promise<SendNotificationUseCaseResponse>,
+  [SendNotificationUseCaseRequest]           
 >
 
 describe('On Answer Created', () => {
   beforeEach(() => {
-    inMemoryQuestionAttachmentsRepository =
-      new InMemoryQuestionAttachmentsRepository()
-    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
-      inMemoryQuestionAttachmentsRepository,
-    )
-    inMemoryAnswerAttachmentsRepository =
-      new InMemoryAnswerAttachmentsRepository()
-    inMemoryAnswersRepository = new InMemoryAnswersRepository(
-      inMemoryAnswerAttachmentsRepository,
-    )
+    inMemoryQuestionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository()
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(inMemoryQuestionAttachmentsRepository)
+    inMemoryAnswerAttachmentsRepository = new InMemoryAnswerAttachmentsRepository()
+    inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository)
     inMemoryNotificationsRepository = new InMemoryNotificationsRepository()
-    sendNotificationUseCase = new SendNotificationUseCase(
-      inMemoryNotificationsRepository,
-    )
+    sendNotificationUseCase = new SendNotificationUseCase(inMemoryNotificationsRepository)
 
     sendNotificationExecuteSpy = vi.spyOn(sendNotificationUseCase, 'execute')
 
     new OnAnswerCreated(inMemoryQuestionsRepository, sendNotificationUseCase)
   })
 
-  it('should  send a notification when an answer is created', async () => {
+  it('should send a notification when an answer is created', async () => {
     const question = makeQuestion()
     const answer = makeAnswer({ questionId: question.id })
 

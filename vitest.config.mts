@@ -5,6 +5,7 @@ import tsConfigPaths from 'vite-tsconfig-paths'
 export default defineConfig({
   test: {
     globals: true,
+    environment: 'node',
     root: './',
     setupFiles: ['./test/setup-e2e.ts'],
   },

@@ -6,7 +6,7 @@ import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questio
 import { SendNotificationUseCase, SendNotificationUseCaseRequest, SendNotificationUseCaseResponse } from '../use-cases/send-notification'
 import { InMemoryNotificationsRepository } from 'test/repositories/in-memory-notifications-repository'
 import { makeQuestion } from 'test/factories/make-question'
-import { vi } from 'vitest'
+import { MockInstance } from 'vitest'
 import { waitFor } from 'test/utils/wait-for'
 import { OnQuestionBestAnswerChosen } from '@/domain/notification/application/subscribers/on-question-best-answer-chosen'
 
@@ -17,9 +17,7 @@ let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryNotificationsRepository: InMemoryNotificationsRepository
 let sendNotificationUseCase: SendNotificationUseCase
 
-let sendNotificationExecuteSpy: vi.MockedFunction<
-  (request: SendNotificationUseCaseRequest) => Promise<SendNotificationUseCaseResponse>
->
+let sendNotificationExecuteSpy: MockInstance<SendNotificationUseCase['execute']>
 
 describe('On Question Best Answer Chosen', () => {
   beforeEach(() => {
@@ -33,10 +31,6 @@ describe('On Question Best Answer Chosen', () => {
     )
     inMemoryNotificationsRepository = new InMemoryNotificationsRepository()
     sendNotificationUseCase = new SendNotificationUseCase(inMemoryNotificationsRepository)
-
-    sendNotificationExecuteSpy = vi.fn() as vi.MockedFunction<
-      (request: SendNotificationUseCaseRequest) => Promise<SendNotificationUseCaseResponse>
-    >
 
     new OnQuestionBestAnswerChosen(
       inMemoryAnswersRepository,

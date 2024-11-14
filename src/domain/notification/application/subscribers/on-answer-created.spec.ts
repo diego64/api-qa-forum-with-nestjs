@@ -11,7 +11,7 @@ import {
 } from '../use-cases/send-notification'
 import { InMemoryNotificationsRepository } from 'test/repositories/in-memory-notifications-repository'
 import { makeQuestion } from 'test/factories/make-question'
-import { vi } from 'vitest'
+import { MockInstance } from 'vitest'
 import { waitFor } from 'test/utils/wait-for'
 
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
@@ -21,10 +21,7 @@ let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryNotificationsRepository: InMemoryNotificationsRepository
 let sendNotificationUseCase: SendNotificationUseCase
 
-let sendNotificationExecuteSpy: vi.SpyInstance<
-  Promise<SendNotificationUseCaseResponse>,
-  [SendNotificationUseCaseRequest]           
->
+let sendNotificationExecuteSpy: MockInstance<SendNotificationUseCase['execute']>
 
 describe('On Answer Created', () => {
   beforeEach(() => {

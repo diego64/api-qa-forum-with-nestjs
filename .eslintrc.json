@@ -1,6 +1,6 @@
 { 
   "plugins": ["vitest"],
-  "extends": "@rocketseat/eslint-config/node",
+  "extends": "plugin:vitest/recommended",
   "rules": {
     "no-useless-constructor": "off",
     "no-new": "off"

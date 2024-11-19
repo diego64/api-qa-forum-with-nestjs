@@ -1,38 +1,36 @@
-import { Prisma, Attachment as PrismaAttachment } from '@prisma/client'
+import { Question as PrismaQuestion, Prisma } from '@prisma/client'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
-import { QuestionAttachment } from '@/domain/forum/enterprise/entities/question-attachment'
+import { Question } from '@/domain/forum/enterprise/entities/question'
+import { Slug } from '@/domain/forum/enterprise/entities/value-objects/slug'
 
-export class PrismaQuestionAttachmentMapper {
-  static toDomain(raw: PrismaAttachment): QuestionAttachment {
-    if (!raw.questionId) {
-      throw new Error('Invalid attachment type.')
-    }
-
-    return QuestionAttachment.create(
+export class PrismaQuestionMapper {
+  static toDomain(raw: PrismaQuestion): Question {
+    return Question.create(
       {
-        attachmentId: new UniqueEntityID(raw.id),
-        questionId: new UniqueEntityID(raw.questionId),
+        title: raw.title,
+        content: raw.content,
+        authorId: new UniqueEntityID(raw.authorId),
+        bestAnswerId: raw.bestAnswerId
+          ? new UniqueEntityID(raw.bestAnswerId)
+          : null,
+        slug: Slug.create(raw.slug),
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
       },
       new UniqueEntityID(raw.id),
     )
   }
 
-  static toPrismaUpdateMany(
-    attachments: QuestionAttachment[],
-  ): Prisma.AttachmentUpdateManyArgs {
-    const attachmentIds = attachments.map((attachment) => {
-      return attachment.attachmentId.toString()
-    })
-
+  static toPrisma(question: Question): Prisma.QuestionUncheckedCreateInput {
     return {
-      where: {
-        id: {
-          in: attachmentIds,
-        },
-      },
-      data: {
-        questionId: attachments[0].questionId.toString(),
-      },
+      id: question.id.toString(),
+      authorId: question.authorId.toString(),
+      bestAnswerId: question.bestAnswerId?.toString(),
+      title: question.title,
+      content: question.content,
+      slug: question.slug.value,
+      createdAt: question.createdAt,
+      updatedAt: question.updatedAt,
     }
   }
 }

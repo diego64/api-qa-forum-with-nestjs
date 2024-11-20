@@ -3,6 +3,6 @@
   "compilerOptions": {
     "types": ["vitest/globals"]
   },
-  "include": ["src", "test"], // Inclui diretórios com código-fonte e testes
+  "include": ["src", "test"],
   "exclude": ["node_modules", "dist"]
 }
